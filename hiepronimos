@@ -1,0 +1,23 @@
+import csv
+
+# abrir archivo de entrada
+with open('datos.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    
+    # crear archivo de salida
+    with open('archivo_salida.csv', 'w', newline='') as f_out:
+        writer = csv.writer(f_out)
+        
+        # escribir encabezados de columna en archivo de salida
+        writer.writerow(['vocablo', 'hiperonimo'])
+        
+        # buscar filas que contienen "que" en la segunda posición de izquierda a derecha
+        for row in reader:
+            definicion = row['definición']
+            palabras = definicion.split()
+            if len(palabras) > 1 and palabras[1] == 'que':
+                # obtener palabra a la izquierda de "que"
+                hiperonimo = palabras[0]
+                
+                # escribir vocablo y palabra a la izquierda en archivo de salida
+                writer.writerow([row['vocablo'], hiperonimo])
