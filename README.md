@@ -1,5 +1,4 @@
-# hiperonimos
-
+# Extracción automática de relaciones semánticas de hiponimia-hiperonimia 
 
 Este código abre un archivo llamado "datos.csv" y lo lee usando la función csv.DictReader. Luego, crea un nuevo archivo llamado "archivo_salida.csv" y escribe los datos en él. La nueva tabla tendrá solo dos columnas: "vocablo" y "hiperonimo".
 
