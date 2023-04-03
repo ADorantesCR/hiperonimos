@@ -1,0 +1,42 @@
+import csv
+from collections import Counter
+
+# lista de palabras vacías en español
+palabras_vacias = ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'lo', 'y', 'o', 'a', 'ante', 'bajo', 'con', 'de', 'desde', 'en', 'entre', 'hacia', 'hasta', 'para', 'por', 'según', 'sin', 'sobre', 'tras']
+
+# abrir archivo de entrada
+with open('datos.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    
+    # contar las apariciones de cada hiperónimo
+    hiperonimos_contados = Counter()
+    
+    # buscar filas que contienen "que" en la segunda posición de izquierda a derecha
+    for row in reader:
+        definicion = row['definición']
+        palabras = definicion.split()
+        
+        if len(palabras) > 1 and palabras[1] == 'que':
+            # obtener palabra a la izquierda de "que"
+            hiperonimo = palabras[0]
+            
+            # ignorar filas con palabras vacías en la columna 'hiperonimo'
+            if hiperonimo.lower() in palabras_vacias:
+                continue
+            
+            # incrementar contador para el hiperónimo
+            hiperonimos_contados[hiperonimo] += 1
+    
+    # ordenar los hiperónimos por su número de aparición de mayor a menor
+    hiperonimos_ordenados = hiperonimos_contados.most_common()
+    
+    # crear archivo de salida final
+    with open('archivo_salida_final.csv', 'w', newline='') as f_out:
+        writer = csv.writer(f_out)
+        
+        # escribir encabezados de columna en archivo de salida final
+        writer.writerow(['hiperonimo', 'apariciones'])
+        
+        # escribir los hiperónimos ordenados por su número de aparición
+        for hiperonimo, apariciones in hiperonimos_ordenados:
+            writer.writerow([hiperonimo, apariciones])
