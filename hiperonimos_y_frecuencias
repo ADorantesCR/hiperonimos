@@ -1,0 +1,51 @@
+import csv
+from collections import Counter
+
+# abrir archivo de entrada
+with open('datos.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    
+    # crear archivo de salida temporal
+    with open('archivo_salida_temp.csv', 'w', newline='') as f_out:
+        writer = csv.writer(f_out)
+        
+        # escribir encabezados de columna en archivo de salida temporal
+        writer.writerow(['vocablo', 'hiperonimo'])
+        
+        # buscar filas que contienen "que" en la segunda posición de izquierda a derecha
+        for row in reader:
+            definicion = row['definición']
+            palabras = definicion.split()
+            if len(palabras) > 1 and palabras[1] == 'que':
+                # obtener palabra a la izquierda de "que"
+                hiperonimo = palabras[0]
+                
+                # escribir vocablo y palabra a la izquierda en archivo de salida temporal
+                writer.writerow([row['vocablo'], hiperonimo])
+    
+    # abrir archivo de salida temporal
+    with open('archivo_salida_temp.csv', 'r') as f:
+        reader = csv.DictReader(f)
+        
+        # crear lista con todas las palabras de la columna hiperonimo
+        hiperonimos = []
+        for row in reader:
+            hiperonimo = row['hiperonimo']
+            hiperonimos.append(hiperonimo)
+            
+        # contar las apariciones de cada palabra en la lista
+        hiperonimos_contados = Counter(hiperonimos)
+        
+        # ordenar las palabras por su número de aparición de mayor a menor
+        hiperonimos_ordenados = hiperonimos_contados.most_common()
+        
+        # crear archivo de salida final
+        with open('archivo_salida_final.csv', 'w', newline='') as f_out:
+            writer = csv.writer(f_out)
+            
+            # escribir encabezados de columna en archivo de salida final
+            writer.writerow(['hiperonimo', 'apariciones'])
+            
+            # escribir las palabras ordenadas por su número de aparición
+            for hiperonimo, apariciones in hiperonimos_ordenados:
+                writer.writerow([hiperonimo, apariciones])
