@@ -1,0 +1,43 @@
+import csv
+
+# lista de palabras vacías en español
+palabras_vacias = ['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'lo', 'y', 'o', 'a', 'ante', 'bajo', 'con', 'de', 'desde', 'en', 'entre', 'hacia', 'hasta', 'para', 'por', 'según', 'sin', 'sobre', 'tras']
+
+# palabras que se buscan en la segunda posición de izquierda a derecha
+palabras_busqueda = ['que', 'quien', 'el que', 'la que', 'los que', 'las que', 'quienes', 'el cual', 'la cual', 'los cuales', 'las cuales', 'cuyo', 'cuya', 'cuyos', 'cuyas', 'donde', 'cuando']
+
+# abrir archivo de entrada
+with open('datos.csv', 'r') as f:
+    reader = csv.DictReader(f)
+    
+    # buscar filas que contienen alguna de las palabras de búsqueda en la segunda posición de izquierda a derecha
+    hiperonimos = set()
+    for row in reader:
+        definicion = row['definición']
+        palabras = definicion.split()
+        
+        if len(palabras) > 1 and len(palabras) >= 2 and palabras[1] in palabras_busqueda:
+            # obtener palabra a la izquierda de la palabra de búsqueda
+            hiperonimo = palabras[0]
+            
+            # ignorar filas con palabras vacías en la columna 'hiperonimo'
+            if hiperonimo.lower() in palabras_vacias:
+                continue
+            
+            # agregar el hiperónimo al conjunto de hiperónimos
+            vocablo = row['vocablo']
+            hiperonimos.add((vocablo, hiperonimo))
+    
+    # ordenar los hiperónimos alfabéticamente por vocablo y luego por hiperónimo
+    hiperonimos_ordenados = sorted(hiperonimos)
+    
+    # crear archivo de salida final
+    with open('archivo_salida_final.csv', 'w', newline='') as f_out:
+        writer = csv.writer(f_out)
+        
+        # escribir encabezados de columna en archivo de salida final
+        writer.writerow(['vocablo', 'hiperonimo'])
+        
+        # escribir los hiperónimos ordenados por vocablo y luego por hiperónimo
+        for vocablo, hiperonimo in hiperonimos_ordenados:
+            writer.writerow([vocablo, hiperonimo])
